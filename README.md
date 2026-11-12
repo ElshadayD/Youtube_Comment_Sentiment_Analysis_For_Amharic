@@ -76,8 +76,6 @@ Sentiment: POSITIVE
 Comment: አንተ ሌባ ነህ
 Sentiment: NEGATIVE
 
-Comment: Interesting episode
-Sentiment: NEUTRAL
 ```
 
 ## Notes
