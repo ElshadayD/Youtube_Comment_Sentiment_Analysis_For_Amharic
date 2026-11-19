@@ -1,49 +1,172 @@
-# YouTube Video Downloader & Amharic Sentiment Analysis
+# YouTube Video Downloader & Amharic Comment Sentiment Analysis
+
+An exploratory NLP project that combines YouTube video downloading with sentiment analysis of YouTube comments using a pretrained Amharic sentiment classification model.
+
+The project focuses on analyzing Ethiopian-language social media content, particularly comments written in **Amharic (Ge'ez script), English, and Romanized Amharic** (Amharic written using Latin characters).
 
 ## Overview
 
-This project combines YouTube video downloading with sentiment analysis of YouTube comments. It uses `yt-dlp` to download individual videos in high quality and a pretrained Amharic sentiment classification model from Flair to analyze comments.
+Social media platforms contain valuable user-generated information that can provide insights into public opinions, reactions, and discussions. However, analyzing Ethiopian-language social media content presents challenges due to language diversity, code-switching, and limited NLP resources.
 
-The sentiment analysis supports comments written in Amharic, English, and mixed languages, as demonstrated in the sample outputs.
+This project explores the use of pretrained NLP models to classify the sentiment of YouTube comments and provides functionality for downloading YouTube videos using `yt-dlp`.
 
 ## Features
 
-- Download individual YouTube videos in the best available video and audio quality.
-- Merge downloaded audio and video into MP4 format.
-- Analyze YouTube comments using a pretrained Amharic sentiment model.
-- Predict sentiment labels: **Positive, Negative, and Neutral**.
-- Display sentiment predictions and confidence scores.
+### 1. YouTube Video Downloading
+- Downloads the best available video and audio streams using `yt-dlp`.
+- Automatically merges video and audio into MP4 format.
+- Includes retry handling for download failures.
+- Saves downloaded videos in a dedicated `videos/` directory.
 
-## Technologies
+### 2. Amharic Sentiment Analysis
+- Uses a pretrained Amharic sentiment classification model developed by the Language Technology group at the University of Hamburg.
+- Processes YouTube comments using the Flair NLP framework.
+- Classifies comments into:
+  - **POSITIVE**
+  - **NEUTRAL**
+  - **NEGATIVE**
+- Provides confidence scores for model predictions.
 
-- Python
-- yt-dlp
-- Flair
-- PyTorch
-- wget
-- Pandas
+## Technologies Used
 
-## Example Output
+| Technology | Purpose |
+|---|---|
+| Python | Core programming language |
+| Jupyter Notebook | Development and experimentation |
+| yt-dlp | YouTube video downloading |
+| Flair | NLP and sentiment classification |
+| Pandas | Data handling and processing |
+| wget | Downloading the pretrained model |
+| FFmpeg | Merging video and audio streams |
 
-```text
-Comment: ምርጥ ነው በርቱ
-Sentiment: POSITIVE
+## Installation
 
-Comment: አንተ ሌባ ነህ
-Sentiment: NEGATIVE
+### Requirements
 
+- Python 3.9+
+- FFmpeg
+- Jupyter Notebook or Google Colab
+
+Install the required Python packages:
+
+```bash
+pip install -U yt-dlp flair wget pandas
 ```
 
-## Notes
+Install FFmpeg if it is not already available on your system.
 
-- The sentiment model is pretrained; this project uses it for inference rather than training a new model.
-- The comment DataFrame must be prepared before running sentiment classification.
-- Sentiment predictions may be inaccurate, particularly for sarcasm, mixed-language comments, transliteration, and context-dependent expressions.
-- YouTube downloading should comply with YouTube's terms of service and applicable copyright laws.
+An optional JavaScript runtime such as Deno can also be used with yt-dlp for YouTube extraction compatibility.
+
+## Usage
+
+### 1. Download YouTube Videos
+
+The notebook uses `yt-dlp` to download videos.
+
+```python
+download_video("https://www.youtube.com/watch?v=<VIDEO_ID>")
+```
+
+Videos are saved in the `./videos/` directory.
+
+**Download configuration:**
+
+| Parameter | Configuration |
+|---|---|
+| Format | `bestvideo+bestaudio/best` |
+| Output format | MP4 |
+| Retries | 5 |
+| Fragment retries | 5 |
+
+### 2. Amharic Comment Sentiment Analysis
+
+The sentiment analysis component uses a pretrained Flair model.
+
+First, load the required libraries and download the model:
+
+```python
+import wget
+from flair.models import TextClassifier
+from flair.data import Sentence
+
+model_url = "http://ltdata1.informatik.uni-hamburg.de/amharic/taskmodels/sent/final-model.pt"
+
+model_path = wget.download(model_url)
+classifier = TextClassifier.load(model_path)
+```
+
+Prepare a Pandas DataFrame containing YouTube comments in a column named `Comment`.
+
+```python
+for text in df["Comment"]:
+    sentence = Sentence(text)
+    classifier.predict(sentence)
+    print(sentence.labels)
+```
+
+**Example prediction:**
+
+```text
+[NEUTRAL (0.7323)]
+```
+
+Each prediction includes a sentiment label and its confidence score.
+
+> **Note:** The notebook does not currently include the YouTube comment collection pipeline. Comments must be supplied separately, for example through the YouTube Data API v3.
+
+## Observations and Limitations
+
+During experimentation, several limitations were observed:
+
+- **Empty Predictions:** Some short or emoji-only comments return no sentiment labels.
+- **Multiple Predictions:** Certain comments receive more than one sentiment label.
+- **Language Limitations:** The pretrained model is designed for Amharic and does not reliably classify English or Romanized Amharic comments.
+- **Text Preprocessing:** HTML entities, links, and formatting tags may affect classification results.
+- **Duplicate Comments:** Repeated comments can appear in the dataset.
+- **Evaluation Limitations:** No manually labeled ground-truth dataset was available, so formal evaluation metrics such as accuracy, precision, recall, and F1-score were not calculated.
+
+These observations highlight the challenges of applying existing NLP models to multilingual and code-switched Ethiopian social media content.
 
 ## Future Improvements
 
-- Automate YouTube comment collection.
-- Save predictions and confidence scores to CSV.
-- Visualize sentiment distribution.
-- Add support for more Ethiopian languages.
+Potential improvements include:
+
+- Implementing text cleaning and HTML entity removal.
+- Adding language and script detection to distinguish Amharic, English, and Romanized Amharic.
+- Exploring multilingual and language-specific sentiment classification models.
+- Improving prediction handling by selecting the highest-confidence label.
+- Removing duplicate comments and handling empty predictions.
+- Building a manually annotated dataset for quantitative model evaluation.
+- Integrating YouTube comment collection into the existing pipeline.
+
+## Responsible Use
+
+- **Copyright and Terms of Service:** Download and analyze only content you have permission to use, and follow YouTube's applicable terms and copyright requirements.
+- **Privacy:** Avoid publishing personal information, usernames, or identifiable comments without appropriate permission.
+- **Model Reliability:** Predictions are experimental and should not be treated as definitive judgments about individuals or their opinions.
+
+## Repository Structure
+
+```text
+.
+├── youtube_scrapping.ipynb   # Video downloading and sentiment analysis
+├── videos/                   # Downloaded videos (not tracked)
+├── requirements.txt          # Project dependencies
+├── .gitignore                # Excluded files
+└── README.md
+```
+
+The downloaded videos and pretrained model files should be excluded from version control using `.gitignore`.
+
+## Acknowledgements
+
+- [yt-dlp](https://github.com/yt-dlp/yt-dlp) – YouTube video downloading.
+- [Flair NLP](https://github.com/flairNLP/flair) – Natural Language Processing framework.
+- [University of Hamburg – Language Technology Group](http://ltdata1.informatik.uni-hamburg.de/) – Pretrained Amharic sentiment classification model.
+
+## Author
+
+**Elshaday Desalegn Asfaw**
+
+Research Interests: Natural Language Processing, Sentiment Analysis, Low-Resource Languages, and Ethiopian Language Technologies.
+
