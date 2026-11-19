@@ -139,24 +139,6 @@ Potential improvements include:
 - Building a manually annotated dataset for quantitative model evaluation.
 - Integrating YouTube comment collection into the existing pipeline.
 
-## Responsible Use
-
-- **Copyright and Terms of Service:** Download and analyze only content you have permission to use, and follow YouTube's applicable terms and copyright requirements.
-- **Privacy:** Avoid publishing personal information, usernames, or identifiable comments without appropriate permission.
-- **Model Reliability:** Predictions are experimental and should not be treated as definitive judgments about individuals or their opinions.
-
-## Repository Structure
-
-```text
-.
-├── youtube_scrapping.ipynb   # Video downloading and sentiment analysis
-├── videos/                   # Downloaded videos (not tracked)
-├── requirements.txt          # Project dependencies
-├── .gitignore                # Excluded files
-└── README.md
-```
-
-The downloaded videos and pretrained model files should be excluded from version control using `.gitignore`.
 
 ## Acknowledgements
 
@@ -164,9 +146,7 @@ The downloaded videos and pretrained model files should be excluded from version
 - [Flair NLP](https://github.com/flairNLP/flair) – Natural Language Processing framework.
 - [University of Hamburg – Language Technology Group](http://ltdata1.informatik.uni-hamburg.de/) – Pretrained Amharic sentiment classification model.
 
-## Author
 
-**Elshaday Desalegn Asfaw**
 
 Research Interests: Natural Language Processing, Sentiment Analysis, Low-Resource Languages, and Ethiopian Language Technologies.
 
